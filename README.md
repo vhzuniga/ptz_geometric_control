@@ -37,25 +37,45 @@ This project implements a **geometry-based control system** for a Pan-Tilt-Zoom 
 
 ## 🚀 Installation & Setup
 
-```bash
+
 # 1. Create and initialize your workspace
+```bash
 mkdir -p ~/ptz_ws/src
+```
+```bash
 cd ~/ptz_ws/src
-
+```
 # 2. Clone the repository
+```bash
 git clone https://github.com/vhzuniga/ptz_geometric_control.git
-
+```
 # 3. Build the workspace
+```bash
 cd ~/ptz_ws
+```
+```bash
 catkin_make
-
+```
 # 4. Source the workspace
+```bash
 echo "source ~/ptz_ws/devel/setup.bash" >> ~/.bashrc
+```
+```bash
 source ~/.bashrc
-
-# 5. Set up udev rules (for USB connection to PTZ device)
+```
+# 5. Set up udev rules 
+```bash
 roscd pan_tilt_bringup/config
+```
+```bash
 sudo cp ./56-pan-tilt.rules /etc/udev/rules.d/
-
+```
 # 6. Launch the visualization and hardware
+```bash
 roslaunch pan_tilt_bringup panTilt_view.launch
+```
+---
+
+
+
+
