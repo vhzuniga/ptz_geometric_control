@@ -30,8 +30,7 @@ This project implements a **geometry-based control system** for a Pan-Tilt-Zoom 
 - A real hardware PTZ system using:
   - Datavideo BC-50 camera
   - IQR-PTU2 pan-tilt base
-- Packages:
-  - `rospy`, `sensor_msgs`, `geometry_msgs`, `tf2_ros`, `visualization_msgs`, etc.
+
 
 ---
 
