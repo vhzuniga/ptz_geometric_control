@@ -1,0 +1,17 @@
+<launch>
+  <!-- Cargar URDF -->
+  <param name="robot_description" textfile="$(find pan_tilt_description)/urdf/pan_tilt.urdf" />
+
+
+  <!-- Estado del robot -->
+  <node pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher" output="screen"/>
+
+  <!-- Script que reproduce la trayectoria -->
+  <node pkg="pan_tilt_description" type="reproduce_trayectoria.py" name="reproduce_trayectoria" output="screen" />
+
+  
+  <!-- RViz -->
+
+  <node name="rviz" pkg="rviz" type="rviz" args="-d $(find pan_tilt_description)/rviz/replay_config.rviz" />
+
+</launch>

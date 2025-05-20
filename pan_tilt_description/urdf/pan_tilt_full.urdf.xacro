@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<robot name="pan_tilt_robot" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <!-- Incluir definiciones -->
+  <xacro:include filename="pan_tilt.urdf.xacro" />
+  <!-- Si quieres incluir también el sensor, descomenta la siguiente línea -->
+  <!-- <xacro:include filename="kinect_dk.xacro" /> -->
+
+  <!-- Link base -->
+  <link name="base_link" />
+
+  <!-- Instancia del pan-tilt -->
+  <xacro:pan_tilt parent="base_link">
+    <origin xyz="0 0 0" rpy="0 0 0" />
+  </xacro:pan_tilt>
+
+</robot>

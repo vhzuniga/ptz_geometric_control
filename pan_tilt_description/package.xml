@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>pan_tilt_description</name>
+  <version>1.0.0</version>
+  <description>PTZ camera visual control package with geometry-based zooming and centering</description>
+
+  <maintainer email="hugo@example.com">Hugo Zuñiga</maintainer>
+  <license>MIT</license>
+
+  <!-- Build dependencies -->
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <!-- Runtime dependencies -->
+  <depend>rospy</depend>
+  <depend>urdf</depend>
+  <depend>geometry_msgs</depend>
+  <depend>std_msgs</depend>
+  <depend>visualization_msgs</depend>
+  <depend>tf2_ros</depend>
+
+  <export>
+  </export>
+</package>

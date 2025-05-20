@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<launch>
+  <arg name="use_joy" default="false"/>
+  <include file="$(find pan_tilt_bringup)/launch/panTilt_bringup.launch">
+    <arg name="pub_urdf" value="true"/>
+  </include>
+  <group if="$(arg use_joy)">
+    <node pkg="joy" type="joy_node" name="joy_node" output="screen">
+      <param name="dev" type="string" value="/dev/input/js0"/>
+      <param name="autorepeat_rate" type="double" value="10"/>
+    </node>
+    <node name="pan_tilt_control" pkg="pan_tilt_driver" type="pan_tilt_control.py" output="screen"/>
+  </group>
+  <!-- Nodo para publicar el video RTSP -->
+  <node pkg="video_stream" type="video_stream_node.py" name="datavideo_node" output="screen"/>
+  
+  <!-- Nodo zoom_controller para controlar el zoom  -->
+  <node pkg="video_stream" type="zoom_controller.py" name="zoom_controller" output="screen"/>
+  
+  <!-- Publicar la nube de puntos siempre -->
+  <node name="pcd_publisher" pkg="pcl_ros" type="pcd_to_pointcloud" 
+        args="$(find pan_tilt_description)/pcd/meiclab2_light.pcd 10.0" 
+        output="screen">
+    <param name="frame_id" value="base_link" />
+  </node>
+  
+  <!-- Controlador PTZ simple para flechas y movimiento -->
+  <node name="simple_ptz_controller" pkg="pan_tilt_description" type="simple_ptz_controller.py" output="screen"/>
+  
+  <!-- Esperar un momento para asegurar que el PCD esté publicando -->
+  <node name="rviz" pkg="rviz" type="rviz" 
+        args="-d $(find pan_tilt_description)/rviz/camera_zoom_cloud_marker.rviz" 
+        required="true" 
+        launch-prefix="bash -c 'sleep 2; $0 $@'" />
+</launch>
