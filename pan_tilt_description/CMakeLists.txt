@@ -21,7 +21,6 @@ catkin_install_python(PROGRAMS
   scripts/guardar_referencia.py
   scripts/foto.py
   scripts/flow.py
-  scripts/error.py
   scripts/auto.py
   scripts/real.py
   scripts/auto_funcional.py
