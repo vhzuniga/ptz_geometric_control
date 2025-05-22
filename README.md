@@ -88,6 +88,9 @@ sudo cp ./56-pan-tilt.rules /etc/udev/rules.d/
 ```
 # 7. Launch the visualization and hardware
 ```bash
+cd ~/ptz_ws
+```
+```bash
 roslaunch pan_tilt_bringup panTilt_view.launch
 ```
 ---
