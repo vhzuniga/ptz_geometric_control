@@ -10,6 +10,7 @@ from sensor_msgs.msg import Image
 from geometry_msgs.msg import PointStamped
 from cv_bridge import CvBridge
 from pan_tilt_msgs.msg import PanTiltCmdDeg
+import rospkg
 
 
 CORRECCIONES_EXTRA = {
@@ -44,7 +45,10 @@ class PTZAuto:
         self.image = None
         self.bridge = CvBridge()
         self.pub_cmd = rospy.Publisher("/pan_tilt_cmd_deg", PanTiltCmdDeg, queue_size=1)
-        self.image_dir = os.path.expanduser("~/ros_ws/src/pan_tilt_ros/images")
+        # === Obtener ruta del paquete ===
+        rospack = rospkg.RosPack()
+        ruta_pkg = rospack.get_path("ptz_geometric_control")
+        ruta_img = os.path.join(ruta_pkg, "images")
         os.makedirs(self.image_dir, exist_ok=True)
         rospy.Subscriber("/datavideo/video", Image, self.image_callback)
         rospy.Subscriber("/clicked_point", PointStamped, self.point_callback)
