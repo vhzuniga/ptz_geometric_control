@@ -47,8 +47,8 @@ class PTZAuto:
         self.pub_cmd = rospy.Publisher("/pan_tilt_cmd_deg", PanTiltCmdDeg, queue_size=1)
         # === Obtener ruta del paquete ===
         rospack = rospkg.RosPack()
-        ruta_pkg = rospack.get_path("ptz_geometric_control")
-        ruta_img = os.path.join(ruta_pkg, "images")
+        ruta_pkg = rospack.get_path("pan_tilt_description")  # o el paquete correcto donde está el script
+        self.image_dir = os.path.join(ruta_pkg, "images")
         os.makedirs(self.image_dir, exist_ok=True)
         rospy.Subscriber("/datavideo/video", Image, self.image_callback)
         rospy.Subscriber("/clicked_point", PointStamped, self.point_callback)

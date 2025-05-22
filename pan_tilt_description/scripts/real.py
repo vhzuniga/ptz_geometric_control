@@ -5,10 +5,16 @@ from sensor_msgs.msg import Image
 from cv_bridge import CvBridge
 import cv2
 import os
+import rospkg
+
 
 class ROIMedidor:
     def __init__(self):
         rospy.init_node('roi_en_vivo')
+        rospack = rospkg.RosPack()
+        ruta_pkg = rospack.get_path("pan_tilt_description")  # o el paquete actual si es otro
+        self.image_dir = os.path.join(ruta_pkg, "images")
+        os.makedirs(self.image_dir, exist_ok=True)
         self.bridge = CvBridge()
         self.image = None
         self.start_point = None
@@ -26,6 +32,7 @@ class ROIMedidor:
         self.FOV_V = 35.84
         self.punto_extra_x = 643
         self.punto_extra_y = int(387.5)
+
 
         cv2.namedWindow("ROI en vivo", cv2.WINDOW_NORMAL)
         cv2.resizeWindow("ROI en vivo", 1280, 720)
@@ -132,7 +139,7 @@ class ROIMedidor:
                 elif key == ord('s') and self.roi and self.image is not None:
                     x, y, w, h = self.roi
                     recorte = self.image[y:y + h, x:x + w]
-                    ruta_salida = "/home/hugo/ros_ws/src/pan_tilt_ros/images/roi_recortada.png"
+                    ruta_salida = os.path.join(self.image_dir, "roi_recortada.png")
                     cv2.imwrite(ruta_salida, recorte)
                     rospy.loginfo(f"💾 ROI recortada guardada en: {ruta_salida}")
 
