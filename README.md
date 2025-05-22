@@ -48,6 +48,12 @@ sudo apt-get install ros-noetic-joy
 ```bash
 sudo apt-get install ros-noetic-serial
 ```
+```bash
+sudo apt install python3-pip
+```
+```bash
+pip3 install opencv-python==4.5.5.64
+```
 # 2. Create and initialize your workspace
 ```bash
 mkdir -p ~/ptz_ws/src
