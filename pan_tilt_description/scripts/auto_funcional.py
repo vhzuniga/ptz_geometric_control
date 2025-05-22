@@ -10,6 +10,7 @@ import time
 from sensor_msgs.msg import Image
 from cv_bridge import CvBridge
 from pan_tilt_msgs.msg import PanTiltCmdDeg
+import rospkg
 
 # Factores de zoom para cálculos
 ZOOM_FACTORES = {
@@ -94,7 +95,9 @@ class ZoomCorrector:
 
                 
         # Directorio para guardar imágenes
-        self.image_dir = os.path.expanduser("~/ros_ws/src/pan_tilt_ros/images")
+        rospack = rospkg.RosPack()
+        ruta_pkg = rospack.get_path("ptz_geometric_control")
+        self.image_dir = os.path.join(ruta_pkg, "images")
         os.makedirs(self.image_dir, exist_ok=True)
         
         # Publicadores
@@ -572,7 +575,7 @@ class ZoomCorrector:
         cv2.putText(img, f"Zoom actual: x{self.current_zoom}", (img.shape[1] - 250, 30), 
                 cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 255), 2)
         
-        cv2.putText(img, "s: guarda ROI | z: zoom | c: calcula error | r: reset", 
+        cv2.putText(img, "s: guarda vista | z: zoom | c: calcula error | r: reset", 
                 (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 255, 255), 2)
         
         return img
@@ -659,7 +662,7 @@ class ZoomCorrector:
                         self.resultado_imagen = None
                     self.status_message = "ROI reiniciado"
                     print("🔄 ROI reiniciado")
-                # Si se presiona 's', guardar ROI (solo si no estamos haciendo zoom)
+                # Si se presiona 's', guardar vista actual (solo si no estamos haciendo zoom)
                 elif key == ord('s') and self.roi_selected and not self.is_zooming:
                     self.guardar_roi()
                 # Si se presiona 'z', aplicar zoom (solo si el ROI está guardado y no estamos haciendo zoom)

@@ -11,11 +11,6 @@ from geometry_msgs.msg import PointStamped
 from cv_bridge import CvBridge
 from pan_tilt_msgs.msg import PanTiltCmdDeg
 
-REFERENCIAS_OBJETOS = {
-    "tablero": {"ancho_m": 0.30, "alto_m": 0.30, "pixeles_x_zoom_1": (204, 145)}, #2.36
-    "bandera": {"ancho_m": 0.88, "alto_m": 1.46, "pixeles_x_zoom_1": (120, 204)}, #8.57
-    "recuadro": {"ancho_m": 0.25, "alto_m": 0.25, "pixeles_x_zoom_1": (55, 75)},#
-}
 
 CORRECCIONES_EXTRA = {
     1.0: (0.000, 0.000), 2.0: (-0.027, -0.585), 3.0: (-0.051, -0.514),
@@ -181,6 +176,18 @@ class PTZAuto:
         # === Cierre del nodo
         rospy.signal_shutdown("Proceso completado")
 
+    def estimar_pixeles_proyectados(self, ancho_m, alto_m, distancia_m, zoom):
+        fov_h_deg, fov_v_deg = ZOOM_FOVS[zoom]
+        fov_h_rad = np.deg2rad(fov_h_deg)
+        fov_v_rad = np.deg2rad(fov_v_deg)
+
+        img_w, img_h = 1280, 720
+
+        pix_ancho = (ancho_m / (2 * distancia_m * np.tan(fov_h_rad / 2))) * img_w
+        pix_alto = (alto_m / (2 * distancia_m * np.tan(fov_v_rad / 2))) * img_h
+
+        return int(pix_ancho), int(pix_alto)
+
 
     def point_callback(self, msg):
         if self.image is None:
@@ -189,18 +196,26 @@ class PTZAuto:
 
         alto_m = float(input("📐 Altura del objeto (m): "))
         ancho_m = float(input("📐 Ancho del objeto (m): "))
-        _ = float(input("📏 Distancia estimada al objeto (m): "))
+        distancia_m = float(input("📏 Distancia estimada al objeto (m): "))
 
-        for _, datos in REFERENCIAS_OBJETOS.items():
-            if np.isclose(alto_m, datos["alto_m"], atol=0.01) and np.isclose(ancho_m, datos["ancho_m"], atol=0.01):
-                pix_ancho, pix_alto = datos["pixeles_x_zoom_1"]
+        img_w, img_h = 1280, 720
+
+        # === Paso 1: estimar tamaño proyectado en zoom x1.0
+        pix_ancho_1x, pix_alto_1x = self.estimar_pixeles_proyectados(ancho_m, alto_m, distancia_m, 1.0)
+        print(f"\n📏 Proyección estimada en zoom x1.0: {pix_ancho_1x}px x {pix_alto_1x}px")
+
+        # === Paso 2: buscar el mayor zoom donde el objeto aún cabe en pantalla
+        for zoom in sorted(ZOOM_FACTORES.keys(), reverse=True):
+            fx, fy = ZOOM_FACTORES[zoom]
+            ancho_zoom = pix_ancho_1x * fx
+            alto_zoom = pix_alto_1x * fy
+            if ancho_zoom <= img_w * 0.9 and alto_zoom <= img_h * 0.9:
+                print(f"📏 Proyección estimada en zoom x{zoom}: {int(ancho_zoom)}px x {int(alto_zoom)}px")
                 break
         else:
-            print("❌ Objeto no reconocido.")
-            return
+            zoom = 1.0
+            print("⚠️ Solo es visible completamente en zoom x1.0.")
 
-        print(f"\n🖼️ Tamaño estimado en zoom x1: {pix_ancho}px x {pix_alto}px")
-        zoom = self.calcular_zoom(pix_ancho, pix_alto)
         print(f"🔍 Zoom recomendado: x{zoom}")
 
         self.aplicar_zoom(zoom)
@@ -208,8 +223,8 @@ class PTZAuto:
 
         # Guardar la imagen final SIN dibujar el cursor fucsia
         img_final = self.image.copy()
-        # Ya no dibujamos el cursor aquí
         cv2.imwrite(os.path.join(self.image_dir, "vista_final.jpg"), img_final)
+
         self.calcular_error_visual(zoom)
 
 if __name__ == "__main__":

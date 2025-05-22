@@ -24,7 +24,6 @@ catkin_install_python(PROGRAMS
   scripts/auto.py
   scripts/real.py
   scripts/auto_funcional.py
-  scripts/resaltar_punto.py
   scripts/iou.py
   scripts/optical.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}

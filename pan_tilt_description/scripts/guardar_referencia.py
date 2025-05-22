@@ -10,6 +10,7 @@ import sys
 import signal
 import os
 import json
+import rospkg
 
 class RayoVisualizador:
     def __init__(self):
@@ -29,8 +30,10 @@ class RayoVisualizador:
         # Variable para controlar si estamos en modo selección
         self.interaccion_activa = True
         
+        rospack = rospkg.RosPack()
+        ruta_pkg = rospack.get_path("pan_tilt_description")
+        self.archivo_puntos = os.path.join(ruta_pkg, "config", "puntos_guardados.json")
         # Cargar puntos guardados anteriormente
-        self.archivo_puntos = os.path.expanduser("~/ros_ws/src/pan_tilt_ros/pan_tilt_description/config/puntos_guardados.json")
         self.puntos_guardados = self.cargar_puntos_guardados()
         rospy.loginfo(f"Cargados {len(self.puntos_guardados)} puntos guardados previamente")
         
